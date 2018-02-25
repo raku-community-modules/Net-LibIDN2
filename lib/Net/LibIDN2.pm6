@@ -1,15 +1,14 @@
 use v6.c;
-unit class Net::LibIDN2:ver<0.0.1>:auth<Ben Davies <kaiepi@outlook.com>>;
-
 use NativeCall;
+unit class Net::LibIDN2:ver<0.0.1>:auth<github:Kaiepi>;
 
 constant LIB = 'idn2';
 
-sub idn2_free(Pointer[Str]) is native(LIB) { * }
 sub idn2_check_version(Str --> Str) is native(LIB) { * }
+method check_version(Str $version = '' --> Str) { idn2_check_version($version) or '' }
 
-constant IDN2_VERSION is export = idn2_check_version('2.0.0');
-constant IDN2_VERSION_NUMBER is export = :16(sprintf '%02x%02x%04x', map { :16(.Str) }, values IDN2_VERSION ~~ / ^(\d+)\.(\d+)\.(\d+)$ /);
+constant IDN2_VERSION is export = idn2_check_version('');
+constant IDN2_VERSION_NUMBER is export = :16(sprintf '%02x%02x%04x', map { :16($_) }, IDN2_VERSION.comb: /\d+/);
 constant IDN2_VERSION_MAJOR is export = IDN2_VERSION_NUMBER +& 0xFF000000 +> 24;
 constant IDN2_VERSION_MINOR is export = IDN2_VERSION_NUMBER +& 0x00FF0000 +> 16;
 constant IDN2_VERSION_PATCH is export = IDN2_VERSION_NUMBER +& 0x0000FFFF;
@@ -53,17 +52,7 @@ constant IDN2_DOT_IN_LABEL is export = -311;
 constant IDN2_INVALID_TRANSITIONAL is export = -312;
 constant IDN2_INVALID_NONTRANSITIONAL is export = -313;
 
-# FIXME: using the idn2_check_version subroutine here segfaults on OpenBSD, but
-# doesn't while installing...?
-proto method check_version(Str $? --> Str) { * }
-multi method check_version(--> Str) { IDN2_VERSION }
-multi method check_version(Str $version --> Str) {
-    my Str ($maj, $min, $patch) := $version.comb: /\d+/;
-    CATCH { default { return '' } }
-
-    my Int $version_num := :16(sprintf "%02x%02x%04x", $maj, $min, $patch);
-    ($version_num > IDN2_VERSION_NUMBER) ?? '' !! IDN2_VERSION;
-}
+sub idn2_free(Pointer[Str]) is native(LIB) { * }
 
 sub idn2_strerror(int32 --> Str) is native(LIB) { * }
 method strerror(Int $errno --> Str) { idn2_strerror($errno) }

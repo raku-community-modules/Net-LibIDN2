@@ -1,46 +1,14 @@
 use v6.c;
-unit module Net::LibIDN2:ver<0.0.1>:auth<Ben Davies (kaiepi@outlook.com)>;
-
-=begin pod
-
-=head1 NAME
-
-Net::LibIDN2 - Perl6 bindings for GNU LibIDN2
-
-=head1 SYNOPSIS
-
-=begin code
-
-	use Net::LibIDN2;
-
-	my Int $code;
-	my $lookup = Net::LibIDN2::idn2_lookup_u8('test', Net::LibIDN2::IDN2_NFC_INPUT, $code);
-	say "$lookup $code"; # test 0
-
-	# TODO: finish writing documentation
-
-=end code
-
-=head1 DESCRIPTION
-
-Net::LibIDN2 is a port of the Perl5 Net::LibIDN2 library by Thomas Jacob.
-
-=head1 AUTHOR
-
-Ben Davies <kaiepi@outlook.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2017 Ben Davies
-
-This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
-
-=end pod
+unit class Net::LibIDN2:ver<0.0.1>:auth<Ben Davies <kaiepi@outlook.com>>;
 
 use NativeCall;
-use Net::LibIDN2::Native;
 
-constant IDN2_VERSION is export = Net::LibIDN2::Native::idn2_check_version('2.0.0');
+constant LIB = 'idn2';
+
+sub idn2_free(Pointer[Str]) is native(LIB) { * }
+sub idn2_check_version(Str --> Str) is native(LIB) { * }
+
+constant IDN2_VERSION is export = idn2_check_version('2.0.0');
 constant IDN2_VERSION_NUMBER is export = :16(sprintf '%02x%02x%04x', map { :16(.Str) }, values IDN2_VERSION ~~ / ^(\d+)\.(\d+)\.(\d+)$ /);
 constant IDN2_VERSION_MAJOR is export = IDN2_VERSION_NUMBER +& 0xFF000000 +> 24;
 constant IDN2_VERSION_MINOR is export = IDN2_VERSION_NUMBER +& 0x00FF0000 +> 16;
@@ -56,261 +24,327 @@ constant IDN2_NONTRANSITIONAL is export = 8;
 constant IDN2_ALLOW_UNASSIGNED is export = 16;
 constant IDN2_USE_STD3_ASCII_RULES is export = 32;
 
-constant IDN2_OK is export(:ALL) = 0;
-constant IDN2_MALLOC is export(:ALL) = -100;
-constant IDN2_NO_CODESET is export(:ALL) = -101;
-constant IDN2_ICONV_FAIL is export(:ALL) = -102;
-constant IDN2_ENCODING_ERROR is export(:ALL) = -200;
-constant IDN2_NFC is export(:ALL) = -201;
-constant IDN2_PUNYCODE_BAD_INPUT is export(:ALL) = -202;
-constant IDN2_PUNYCODE_BIG_OUTPUT is export(:ALL) = -203;
-constant IDN2_PUNYCODE_OVERFLOW is export(:ALL) = -204;
-constant IDN2_TOO_BIG_DOMAIN is export(:ALL) = -205;
-constant IDN2_TOO_BIG_LABEL is export(:ALL) = -206;
-constant IDN2_INVALID_ALABEL is export(:ALL) = -207;
-constant IDN2_UALABEL_MISMATCH is export(:ALL) = -208;
-constant IDN2_INVALID_FLAGS is export(:ALL) = -209;
-constant IDN2_NOT_NFC is export(:ALL) = -300;
-constant IDN2_2HYPHEN is export(:ALL) = -301;
-constant IDN2_HYPHEN_STARTEND is export(:ALL) = -302;
-constant IDN2_LEADING_COMBINING is export(:ALL) = -303;
-constant IDN2_DISALLOWED is export(:ALL) = -304;
-constant IDN2_CONTEXTJ is export(:ALL) = -305;
-constant IDN2_CONTEXTJ_NO_RULE is export(:ALL) = -306;
-constant IDN2_CONTEXTO is export(:ALL) = -307;
-constant IDN2_CONTEXTO_NO_RULE is export(:ALL) = -308;
-constant IDN2_UNASSIGNED is export(:ALL) = -309;
-constant IDN2_BIDI is export(:ALL) = -310;
-constant IDN2_DOT_IN_LABEL is export(:ALL) = -311;
-constant IDN2_INVALID_TRANSITIONAL is export(:ALL) = -312;
-constant IDN2_INVALID_NONTRANSITIONAL is export(:ALL) = -313;
+constant IDN2_OK is export = 0;
+constant IDN2_MALLOC is export = -100;
+constant IDN2_NO_CODESET is export = -101;
+constant IDN2_ICONV_FAIL is export = -102;
+constant IDN2_ENCODING_ERROR is export = -200;
+constant IDN2_NFC is export = -201;
+constant IDN2_PUNYCODE_BAD_INPUT is export = -202;
+constant IDN2_PUNYCODE_BIG_OUTPUT is export = -203;
+constant IDN2_PUNYCODE_OVERFLOW is export = -204;
+constant IDN2_TOO_BIG_DOMAIN is export = -205;
+constant IDN2_TOO_BIG_LABEL is export = -206;
+constant IDN2_INVALID_ALABEL is export = -207;
+constant IDN2_UALABEL_MISMATCH is export = -208;
+constant IDN2_INVALID_FLAGS is export = -209;
+constant IDN2_NOT_NFC is export = -300;
+constant IDN2_2HYPHEN is export = -301;
+constant IDN2_HYPHEN_STARTEND is export = -302;
+constant IDN2_LEADING_COMBINING is export = -303;
+constant IDN2_DISALLOWED is export = -304;
+constant IDN2_CONTEXTJ is export = -305;
+constant IDN2_CONTEXTJ_NO_RULE is export = -306;
+constant IDN2_CONTEXTO is export = -307;
+constant IDN2_CONTEXTO_NO_RULE is export = -308;
+constant IDN2_UNASSIGNED is export = -309;
+constant IDN2_BIDI is export = -310;
+constant IDN2_DOT_IN_LABEL is export = -311;
+constant IDN2_INVALID_TRANSITIONAL is export = -312;
+constant IDN2_INVALID_NONTRANSITIONAL is export = -313;
 
-proto idn2_to_ascii_4i(Str, Int $?, Int $? --> Str) { !!! }
-multi sub idn2_to_ascii_4i(Str $input, Int $flags = 0 --> Str) { !!! }
-multi sub idn2_to_ascii_4i(Str $input, Int $flags, Int $code is rw --> Str) { !!! }
+# FIXME: using the idn2_check_version subroutine here segfaults on OpenBSD, but
+# doesn't while installing...?
+proto method check_version(Str $? --> Str) { * }
+multi method check_version(--> Str) { IDN2_VERSION }
+multi method check_version(Str $version --> Str) {
+    my Str ($maj, $min, $patch) := $version.comb: /\d+/;
+    CATCH { default { return '' } }
 
-proto idn2_to_ascii_4z(Str, Int $?, Int $? --> Str) { !!! }
-multi sub idn2_to_ascii_4z(Str $input, Int $flags = 0 --> Str) { !!! }
-multi sub idn2_to_ascii_4z(Str $input, Int $flags, Int $code is rw --> Str) { !!! }
-
-our proto idn2_to_ascii_8z(Str, Int $?, Int $? --> Str) { * }
-
-our multi sub idn2_to_ascii_8z(Str $input, Int $flags = 0 --> Str) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_to_ascii_8z($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
-
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
+    my Int $version_num := :16(sprintf "%02x%02x%04x", $maj, $min, $patch);
+    ($version_num > IDN2_VERSION_NUMBER) ?? '' !! IDN2_VERSION;
 }
 
-our multi sub idn2_to_ascii_8z(Str $input, Int $flags, Int $code is rw --> Str) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_to_ascii_8z($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+sub idn2_strerror(int32 --> Str) is native(LIB) { * }
+method strerror(Int $errno --> Str) { idn2_strerror($errno) }
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
+sub idn2_strerror_name(int32 --> Str) is native(LIB) { * }
+method strerror_name(Int $errno --> Str) { idn2_strerror_name($errno) }
+
+sub idn2_lookup_u8(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
+proto method lookup_u8(Str, Int $?, Int $? --> Str) { * }
+multi method lookup_u8(Str $input, Int $flags = 0 --> Str) {
+    my $output := Pointer[Str].new;
+    my $code := idn2_lookup_u8($input, $output, $flags);
+    return '' if $code !== IDN2_OK;
+
+    my $res := $output.deref;
+    idn2_free($output);
+    $res;
+}
+multi method lookup_u8(Str $input, Int $flags, Int $code is rw --> Str) {
+    my $output := Pointer[Str].new;
+    $code = idn2_lookup_u8($input, $output, $flags);
+    return '' if $code !== IDN2_OK;
+
+    my $res := $output.deref;
+    idn2_free($output);
+    $res;
 }
 
-our proto idn2_to_ascii_lz(Str, Int $?, Int $? --> Str) { * }
+sub idn2_register_u8(Str, Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
+proto method register_u8(Str, Str $?, Int $?, Int $? --> Str) { * }
+multi method register_u8(Str $uinput, Str $ainput, Int $flags --> Str) {
+    my $output := Pointer[Str].new;
+    my $code := idn2_register_u8($uinput, $ainput, $output, $flags);
+    return '' if $code !== IDN2_OK;
 
-our multi sub idn2_to_ascii_lz(Str $input, Int $flags = 0 --> Str) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_to_ascii_lz($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+    my $res := $output.deref;
+    idn2_free($output);
+    $res;
+}
+multi method register_u8(Str $uinput, Str $ainput, Int $flags, Int $code is rw --> Str) {
+    my $output := Pointer[Str].new;
+    $code = idn2_register_u8($uinput, $ainput, $output, $flags);
+    return '' if $code !== IDN2_OK;
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
+    my $res := $output.deref;
+    idn2_free($output);
+    $res;
 }
 
-our multi sub idn2_to_ascii_lz(Str $input, Int $flags, Int $code is rw --> Str) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_to_ascii_lz($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+=begin pod
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=head1 NAME
 
-proto idn2_to_unicode_44i(Str, Int $?, Int $? --> Str) { !!! }
-multi sub idn2_to_unicode_44i(Str $input, Int $flags = 0 --> Str) { !!! }
-multi sub idn2_to_unicode_44i(Str $input, Int $flags, Int $code is rw) { !!! }
+Net::LibIDN2 - Perl6 bindings for GNU LibIDN2
 
-proto idn2_to_unicode_4z4z(Str, Int $?, Int $? --> Str) { !!! }
-multi sub idn2_to_unicode_4z4z(Str $input, Int $flags = 0 --> Str) { !!! }
-multi sub idn2_to_unicode_4z4z(Str $input, Int $flags, Int $code is rw) { !!! }
+=head1 SYNOPSIS
 
-proto idn2_to_unicode_8z4z(Str, Int $?, Int $? --> Str) { !!! }
-multi sub idn2_to_unicode_8z4z(Str $input, Int $flags = 0 --> Str) { !!! }
-multi sub idn2_to_unicode_8z4z(Str $input, Int $flags, Int $code is rw) { !!! }
+=begin code
 
-our proto idn2_to_unicode_8z8z(Str, Int $?, Int $? --> Str) { * }
+    use Net::LibIDN2;
 
-our multi sub idn2_to_unicode_8z8z(Str $input, Int $flags = 0 --> Str) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_to_unicode_8z8z($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+    my $idn := Net::LibIDN2.new;
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+    my Int $code;
+    my $lookup := $idn.lookup_u8('test', IDN2_NFC_INPUT, $code);
+    say "$lookup $code"; # test 0
 
-our multi sub idn2_to_unicode_8z8z(Str $input, Int $flags, Int $code is rw --> Str) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_to_unicode_8z8z($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+    my $result := $idn.register_u8("m\xFC\xDFli", 'xn--mli-5ka8l', IDN2_NFC_INPUT, $code);
+    say "$result $code"; # xn--mli-5ka8l 0
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+    say $idn.strerror($code);      # success
+    say $idn.strerror_name($code); # IDN2_OK
 
-our proto idn2_to_unicode_8zlz(Str, Int $?, Int $? --> Str) { * }
+=end code
 
-our multi sub idn2_to_unicode_8zlz(Str $input, Int $flags = 0 --> Str) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_to_unicode_8zlz($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+=head1 DESCRIPTION
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
 
-our multi sub idn2_to_unicode_8zlz(Str $input, Int $flags, Int $code is rw --> Str) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_to_unicode_8zlz($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+=head1 METHODS
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=item check_version(Str $version? --> Str)
 
-our proto idn2_to_unicode_lzlz(Str, Int $?, Int $? --> Str) { * }
+Compares $version against the version of LibIDN2 installed and returns either
+an empty string if $version is greater than the version installed, or
+IDN2_VERSION otherwise.
 
-our multi sub idn2_to_unicode_lzlz(Str $input, Int $flags = 0 --> Str) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_to_unicode_lzlz($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+=item strerror(Int $errno --> Str)
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+Returns the error represented by $errno in human readable form.
 
-our multi sub idn2_to_unicode_lzlz(Str $input, Int $flags, Int $code is rw --> Str) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_to_unicode_8zlz($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+=item strerror_name(Int $errno --> Str)
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+Returns the internal error name of $errno.
 
-our proto idn2_lookup_u8(Str, Int $?, Int $? --> Str) is export(:ALL) { * }
+=item lookup_u8(Str $input, Int $flags?, Int $code is rw --> Str)
 
-our multi sub idn2_lookup_u8(Str $input, Int $flags = 0 --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_lookup_u8($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+Performs an IDNA2008 lookup string conversion on $input. See RFC 5891, section
+5. $input must be a UTF8 encoded string in NFC form if no IDN2_NFC_INPUT flag
+is passed.
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=item register_u8(Str $uinput, Str $ainput, Int $flags?, Int $code is rw --> Str)
 
-our multi sub idn2_lookup_u8(Str $input, Int $flags, Int $code is rw --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_lookup_u8($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+Performs an IDNA2008 register string conversion on $uinput and $ainput. See RFC
+5891, section 4. $uinput must be a UTF8 encoded string in NFC form if no
+IDN2_NFC_INPUT flag is passed. $ainput must be an ACE encoded string.
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=head1 CONSTANTS
 
-our proto idn2_lookup_ul(Str, Int $?, Int $? --> Str) is export(:ALL) { * }
+=item Int IDN2_LABEL_MAX_LENGTH
 
-our multi sub idn2_lookup_ul(Str $input, Int $flags = 0 --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_lookup_ul($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+The maximum label length.
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=item Int IDN2_DOMAIN_MAX_LENGTH
 
-our multi sub idn2_lookup_ul(Str $input, Int $flags, Int $code is rw --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_lookup_ul($input, $output, $flags);
-	return '' if $code !== IDN2_OK;
+The maximum domain name length.
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=head2 VERSIONING
 
-our proto idn2_register_u8(Str, $?, Int $?, Int $? --> Str) is export(:ALL) { * }
+=item Str IDN2_VERSION
 
-our multi sub idn2_register_u8(Str $uinput, $ainput?, Int $flags = 0 --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_register_u8($uinput, $ainput, $output, $flags);
-	return '' if $code !== IDN2_OK;
+The version of LibIDN2 installed.
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=item Int IDN2_VERSION_NUMBER
 
-our multi sub idn2_register_u8(Str $uinput, $ainput, Int $flags, Int $code is rw --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_register_u8($uinput, $ainput, $output, $flags);
-	return '' if $code !== IDN2_OK;
+The version of LibIDN2 installed represented as a 32 bit integer. The first
+pair of bits represents the major version, the second represents the minor
+version, and the last 4 represent the patch version.
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+=item Int IDN2_VERSION_MAJOR
 
-our proto idn2_register_ul(Str, $?, Int $?, Int $? --> Str) is export(:ALL) { * }
+The major version of LibIDN2 installed.
 
-our multi sub idn2_register_ul(Str $uinput, $ainput?, Int $flags = 0 --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	my $code := Net::LibIDN2::Native::idn2_register_ul($uinput, $ainput, $output, $flags);
-	return '' if $code !== IDN2_OK;
+=item Int IDN2_VERSION_MINOR
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+The minor version of LidIDN2 installed.
 
-our multi sub idn2_register_ul(Str $uinput, $ainput, Int $flags, Int $code is rw --> Str) is export(:ALL) {
-	my $output := Pointer[Str].new;
-	$code = Net::LibIDN2::Native::idn2_register_ul($uinput, $ainput, $output, $flags);
-	return '' if $code !== IDN2_OK;
+=item Int IDN2_VERSION_PATCH
 
-	my $res := $output.deref;
-	Net::LibIDN2::Native::idn2_free($output);
-	$res;
-}
+The patch version of LibIDN2 installed.
 
-our sub idn2_strerror(int32 $code --> Str) is export(:ALL) {
-	Net::LibIDN2::Native::idn2_strerror($code) || '';
-}
+=head2 FLAGS
 
-our sub idn2_strerror_name(int32 $code --> Str) is export(:ALL) {
-	Net::LibIDN2::Native::idn2_strerror_name($code) || '';
-}
+=item Int IDN2_NFC_INPUT
 
-our sub idn2_check_version(Str $version? --> Str) is export(:ALL) {
-	Net::LibIDN2::Native::idn2_check_version($version) || '';
-}
+Normalize the input string using the NFC format.
+
+=item Int IDN2_ALABEL_ROUNDTRIP
+
+Perform optional IDNA2008 lookup roundtrip check.
+
+=item Int IDN2_TRANSITIONAL
+
+Perform Unicode TR46 transitional processing.
+
+=item Int IDN2_NONTRANSITIONAL
+
+Perform Unicode TR46 non-transitional processing.
+
+=head2 ERRORS
+
+=item Int IDN2_OK
+
+Success.
+
+=item Int IDN2_MALLOC
+
+Memory allocation failure.
+
+=item Int IDN2_NO_CODESET
+
+Failed to determine a string's encoding.
+
+=item Int IDN2_ICONV_FAIL
+
+Failed to transcode a string to UTF8.
+
+=item Int IDN2_ENCODING_ERROR
+
+Unicode data encoding error.
+
+=item Int IDN2_NFC
+
+Failed to normalize a string.
+
+=item Int IDN2_PUNYCODE_BAD_INPUT
+
+Invalid input to Punycode.
+
+=item Int IDN2_PUNYCODE_BIG_OUTPUT
+
+Punycode output buffer is too small.
+
+=item Int IDN2_PUNYCODE_OVERFLOW
+
+Punycode conversion would overflow.
+
+=item Int IDN2_TOO_BIG_DOMAIN
+
+Domain is larger than IDN2_DOMAIN_MAX_LENGTH
+
+=item Int IDN2_TOO_BIG_LABEL
+
+Label is larger than IDN2_LABEL_MAX_LENGTH
+
+=item Int IDN2_INVALID_ALABEL
+
+Invalid A-label.
+
+=item Int IDN2_UALABEL_MISMATCH
+
+Given U-label and A-label do not match.
+
+=item Int IDN2_INVALID_FLAGS
+
+Invalid combination of flags.
+
+=item Int IDN2_NOT_NFC
+
+String is not normalized in NFC format.
+
+=item Int IDN2_2HYPHEN
+
+String has forbidden two hyphens.
+
+=item Int IDN2_HYPHEN_STARTEND
+
+String has forbidden start/end hyphen.
+
+=item Int IDN2_LEADING_COMBINING
+
+String has forbidden leading combining character.
+
+=item Int IDN2_DISALLOWED
+
+String has disallowed character.
+
+=item Int IDN2_CONTEXTJ
+
+String has forbidden context-j character.
+
+=item Int IDN2_CONTEXTJ_NO_RULE
+
+String has context-j character without any rull.
+
+=item Int IDN2_CONTEXTO
+
+String has forbidden context-o character.
+
+=item Int IDN2_CONTEXTO_NO_RULE
+
+String has context-o character without any rull.
+
+=item Int IDN2_UNASSIGNED
+
+String has forbidden unassigned character.
+
+=item Int IDN2_BIDI
+
+String has forbidden bi-directional properties.
+
+=item Int IDN2_DOT_IN_LABEL
+
+Label has forbidden dot (TR46).
+
+=item Int IDN2_INVALID_TRANSITIONAL
+
+Label has a character forbidden in transitional mode (TR46).
+
+=item Int IDN2_INVALID_NONTRANSITIONAL
+
+Label has a character forbidden in non-transitional mode (TR46).
+
+=head1 AUTHOR
+
+Ben Davies <kaiepi@outlook.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2017 Ben Davies
+
+This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+
+=end pod

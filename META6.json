@@ -7,8 +7,7 @@
   "name" : "Net::LibIDN2",
   "perl" : "6.c",
   "provides" : {
-    "Net::LibIDN2" : "lib/Net/LibIDN2.pm6",
-    "Net::LibIDN2::Native" : "lib/Net/LibIDN2/Native.pm6"
+    "Net::LibIDN2" : "lib/Net/LibIDN2.pm6"
   },
   "resources" : [ ],
   "source-url" : "https://github.com/Kaiepi/p6-Net-LibIDN2.git",

@@ -5,7 +5,6 @@ unit class Net::LibIDN2:ver<0.0.1>:auth<github:Kaiepi>;
 constant LIB = 'idn2';
 
 sub idn2_check_version(Str --> Str) is native(LIB) { * }
-method check_version(Str $version = '' --> Str) { idn2_check_version($version) }
 
 constant IDN2_VERSION        is export = idn2_check_version('');
 constant IDN2_VERSION_NUMBER is export = {
@@ -13,7 +12,6 @@ constant IDN2_VERSION_NUMBER is export = {
     given +$digits {
         when 2  { :16(sprintf '%02x%02x0000', $digits) }
         when 3  { :16(sprintf '%02x%02x%04x', $digits) }
-        default { die 'Failed to parse LibIDN2 version number: ' ~ IDN2_VERSION }
     }
 }();
 constant IDN2_VERSION_MAJOR  is export = IDN2_VERSION_NUMBER +& 0xFF000000 +> 24;
@@ -61,6 +59,14 @@ constant IDN2_INVALID_NONTRANSITIONAL is export = -313;
 
 sub idn2_free(Pointer[Str]) is native(LIB) { * }
 
+method check_version(Str $version = '' --> Str) {
+    # See https://github.com/rakudo/rakudo/issues/1576
+    my $v := Version.new($version);
+    CATCH { default { return IDN2_VERSION } }
+    my $v2 := Version.new(IDN2_VERSION);
+    $v > $v2 ?? '' !! IDN2_VERSION;
+}
+
 sub idn2_strerror(int32 --> Str) is native(LIB) { * }
 method strerror(Int $errno --> Str) { idn2_strerror($errno) }
 
@@ -80,19 +86,19 @@ sub invoke_native(&idn2, Int $flags, Int $code is rw, *@inputs --> Str) {
 sub idn2_lookup_u8(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method lookup_u8(Str, Int $?, Int $? --> Str) { * }
 multi method lookup_u8(Str $input, Int $flags = 0 --> Str) {
-    invoke_native(&idn2_lookup_u8, $flags, my Int $, $input)
+    invoke_native(&idn2_lookup_u8, $flags, my Int $, $input);
 }
 multi method lookup_u8(Str $input, Int $flags, Int $code is rw --> Str) {
-    invoke_native(&idn2_lookup_u8, $flags, $code, $input)
+    invoke_native(&idn2_lookup_u8, $flags, $code, $input);
 }
 
 sub idn2_register_u8(Str, Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method register_u8(Str, Str $?, Int $?, Int $? --> Str) { * }
 multi method register_u8(Str $uinput, Str $ainput, Int $flags --> Str) {
-    invoke_native(&idn2_register_u8, $flags, my Int $, $uinput, $ainput)
+    invoke_native(&idn2_register_u8, $flags, my Int $, $uinput, $ainput);
 }
 multi method register_u8(Str $uinput, Str $ainput, Int $flags, Int $code is rw --> Str) {
-    invoke_native(&idn2_register_u8, $flags, $code, $uinput, $ainput)
+    invoke_native(&idn2_register_u8, $flags, $code, $uinput, $ainput);
 }
 
 =begin pod

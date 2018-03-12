@@ -5,6 +5,7 @@ unit class Net::LibIDN2:ver<0.0.1>:auth<github:Kaiepi>;
 constant LIB = 'idn2';
 
 sub idn2_check_version(Str --> Str) is native(LIB) { * }
+method check_version(Str $version = '' --> Str) { idn2_check_version($version) }
 
 constant IDN2_VERSION        is export = idn2_check_version('');
 constant IDN2_VERSION_NUMBER is export = {
@@ -58,14 +59,6 @@ constant IDN2_INVALID_TRANSITIONAL    is export = -312;
 constant IDN2_INVALID_NONTRANSITIONAL is export = -313;
 
 sub idn2_free(Pointer[Str]) is native(LIB) { * }
-
-method check_version(Str $version = '' --> Str) {
-    # See https://github.com/rakudo/rakudo/issues/1576
-    my $v := Version.new($version);
-    CATCH { default { return IDN2_VERSION } }
-    my $v2 := Version.new(IDN2_VERSION);
-    $v > $v2 ?? '' !! IDN2_VERSION;
-}
 
 sub idn2_strerror(int32 --> Str) is native(LIB) { * }
 method strerror(Int $errno --> Str) { idn2_strerror($errno) }

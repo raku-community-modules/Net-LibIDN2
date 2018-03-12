@@ -126,195 +126,203 @@ Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
 
 =head1 METHODS
 
-=item check_version(Str $version? --> Str)
+=item B<Net::LibIDN2.check_version>(--> Str)
+=item B<Net::LibIDN2.check_version>(Str I<$version> --> Str)
 
-Compares $version against the version of LibIDN2 installed and returns either
-an empty string if $version is greater than the version installed, or
-IDN2_VERSION otherwise.
+Compares I<$version> against the version of LibIDN2 installed and returns either
+an empty string if I<$version> is greater than the version installed, or
+I<IDN2_VERSION> otherwise.
 
-=item strerror(Int $errno --> Str)
+=item B<Net::LibIDN2.strerror>(Int I<$errno> --> Str)
 
-Returns the error represented by $errno in human readable form.
+Returns the error represented by I<$errno> in human readable form.
 
-=item strerror_name(Int $errno --> Str)
+=item B<Net::LibIDN2.strerror_name>(Int I<$errno> --> Str)
 
-Returns the internal error name of $errno.
+Returns the internal error name of I<$errno>.
 
-=item lookup_u8(Str $input, Int $flags?, Int $code is rw --> Str)
+=item B<Net::LibIDN2.lookup_u8>(Str I<$input> --> Str)
+=item B<Net::LibIDN2.lookup_u8>(Str I<$input>, Int I<$code> is rw --> Str)
+=item B<Net::LibIDN2.lookup_u8>(Str I<$input>, Int I<$flags> --> Str)
+=item B<Net::LibIDN2.lookup_u8>(Str I<$input>, Int I<$flags>, Int I<$code> is rw --> Str)
 
-Performs an IDNA2008 lookup string conversion on $input. See RFC 5891, section
-5. $input must be a UTF8 encoded string in NFC form if no IDN2_NFC_INPUT flag
+Performs an IDNA2008 lookup string conversion on I<$input>. See RFC 5891, section
+5. I<$input> must be a UTF8 encoded string in NFC form if no I<IDN2_NFC_INPUT> flag
 is passed.
 
-=item register_u8(Str $uinput, Str $ainput, Int $flags?, Int $code is rw --> Str)
 
-Performs an IDNA2008 register string conversion on $uinput and $ainput. See RFC
-5891, section 4. $uinput must be a UTF8 encoded string in NFC form if no
-IDN2_NFC_INPUT flag is passed. $ainput must be an ACE encoded string.
+=item B<Net::LibIDN2.register_u8>(Str I<$uinput>, Str I<$ainput> --> Str)
+=item B<Net::LibIDN2.register_u8>(Str I<$uinput>, Str I<$ainput>, Int I<$code> is rw --> Str)
+=item B<Net::LibIDN2.register_u8>(Str I<$uinput>, Str I<$ainput>, Int I<$flags> --> Str)
+=item B<Net::LibIDN2.register_u8>(Str I<$uinput>, Str I<$ainput>, Int I<$flags>, Int I<$code> is rw --> Str)
+
+Performs an IDNA2008 register string conversion on I<$uinput> and I<$ainput>. See RFC
+5891, section 4. I<$uinput> must be a UTF8 encoded string in NFC form if no
+I<IDN2_NFC_INPUT> flag is passed. I<$ainput> must be an ACE encoded string.
 
 =head1 CONSTANTS
 
-=item Int IDN2_LABEL_MAX_LENGTH
+=item Int B<IDN2_LABEL_MAX_LENGTH>
 
 The maximum label length.
 
-=item Int IDN2_DOMAIN_MAX_LENGTH
+=item Int B<IDN2_DOMAIN_MAX_LENGTH>
 
 The maximum domain name length.
 
 =head2 VERSIONING
 
-=item Str IDN2_VERSION
+=item Str B<IDN2_VERSION>
 
 The version of LibIDN2 installed.
 
-=item Int IDN2_VERSION_NUMBER
+=item Int B<IDN2_VERSION_NUMBER>
 
 The version of LibIDN2 installed represented as a 32 bit integer. The first
 pair of bits represents the major version, the second represents the minor
 version, and the last 4 represent the patch version.
 
-=item Int IDN2_VERSION_MAJOR
+=item Int B<IDN2_VERSION_MAJOR>
 
 The major version of LibIDN2 installed.
 
-=item Int IDN2_VERSION_MINOR
+=item Int B<IDN2_VERSION_MINOR>
 
 The minor version of LidIDN2 installed.
 
-=item Int IDN2_VERSION_PATCH
+=item Int B<IDN2_VERSION_PATCH>
 
 The patch version of LibIDN2 installed.
 
 =head2 FLAGS
 
-=item Int IDN2_NFC_INPUT
+=item Int B<IDN2_NFC_INPUT>
 
 Normalize the input string using the NFC format.
 
-=item Int IDN2_ALABEL_ROUNDTRIP
+=item Int B<IDN2_ALABEL_ROUNDTRIP>
 
 Perform optional IDNA2008 lookup roundtrip check.
 
-=item Int IDN2_TRANSITIONAL
+=item Int B<IDN2_TRANSITIONAL>
 
 Perform Unicode TR46 transitional processing.
 
-=item Int IDN2_NONTRANSITIONAL
+=item Int B<IDN2_NONTRANSITIONAL>
 
 Perform Unicode TR46 non-transitional processing.
 
 =head2 ERRORS
 
-=item Int IDN2_OK
+=item Int B<IDN2_OK>
 
 Success.
 
-=item Int IDN2_MALLOC
+=item Int B<IDN2_MALLOC>
 
 Memory allocation failure.
 
-=item Int IDN2_NO_CODESET
+=item Int B<IDN2_NO_CODESET>
 
 Failed to determine a string's encoding.
 
-=item Int IDN2_ICONV_FAIL
+=item Int B<IDN2_ICONV_FAIL>
 
 Failed to transcode a string to UTF8.
 
-=item Int IDN2_ENCODING_ERROR
+=item Int B<IDN2_ENCODING_ERROR>
 
 Unicode data encoding error.
 
-=item Int IDN2_NFC
+=item Int B<IDN2_NFC>
 
 Failed to normalize a string.
 
-=item Int IDN2_PUNYCODE_BAD_INPUT
+=item Int B<IDN2_PUNYCODE_BAD_INPUT>
 
 Invalid input to Punycode.
 
-=item Int IDN2_PUNYCODE_BIG_OUTPUT
+=item Int B<IDN2_PUNYCODE_BIG_OUTPUT>
 
 Punycode output buffer is too small.
 
-=item Int IDN2_PUNYCODE_OVERFLOW
+=item Int B<IDN2_PUNYCODE_OVERFLOW>
 
 Punycode conversion would overflow.
 
-=item Int IDN2_TOO_BIG_DOMAIN
+=item Int B<IDN2_TOO_BIG_DOMAIN>
 
-Domain is larger than IDN2_DOMAIN_MAX_LENGTH
+Domain is larger than I<IDN2_DOMAIN_MAX_LENGTH>.
 
-=item Int IDN2_TOO_BIG_LABEL
+=item Int B<IDN2_TOO_BIG_LABEL>
 
-Label is larger than IDN2_LABEL_MAX_LENGTH
+Label is larger than I<IDN2_LABEL_MAX_LENGTH>.
 
-=item Int IDN2_INVALID_ALABEL
+=item Int B<IDN2_INVALID_ALABEL>
 
 Invalid A-label.
 
-=item Int IDN2_UALABEL_MISMATCH
+=item Int B<IDN2_UALABEL_MISMATCH>
 
 Given U-label and A-label do not match.
 
-=item Int IDN2_INVALID_FLAGS
+=item Int B<IDN2_INVALID_FLAGS>
 
 Invalid combination of flags.
 
-=item Int IDN2_NOT_NFC
+=item Int B<IDN2_NOT_NFC>
 
 String is not normalized in NFC format.
 
-=item Int IDN2_2HYPHEN
+=item Int B<IDN2_2HYPHEN>
 
 String has forbidden two hyphens.
 
-=item Int IDN2_HYPHEN_STARTEND
+=item Int B<IDN2_HYPHEN_STARTEND>
 
 String has forbidden start/end hyphen.
 
-=item Int IDN2_LEADING_COMBINING
+=item Int B<IDN2_LEADING_COMBINING>
 
 String has forbidden leading combining character.
 
-=item Int IDN2_DISALLOWED
+=item Int B<IDN2_DISALLOWED>
 
 String has disallowed character.
 
-=item Int IDN2_CONTEXTJ
+=item Int B<IDN2_CONTEXTJ>
 
 String has forbidden context-j character.
 
-=item Int IDN2_CONTEXTJ_NO_RULE
+=item Int B<IDN2_CONTEXTJ_NO_RULE>
 
 String has context-j character without any rull.
 
-=item Int IDN2_CONTEXTO
+=item Int B<IDN2_CONTEXTO>
 
 String has forbidden context-o character.
 
-=item Int IDN2_CONTEXTO_NO_RULE
+=item Int B<IDN2_CONTEXTO_NO_RULE>
 
 String has context-o character without any rull.
 
-=item Int IDN2_UNASSIGNED
+=item Int B<IDN2_UNASSIGNED>
 
 String has forbidden unassigned character.
 
-=item Int IDN2_BIDI
+=item Int B<IDN2_BIDI>
 
 String has forbidden bi-directional properties.
 
-=item Int IDN2_DOT_IN_LABEL
+=item Int B<IDN2_DOT_IN_LABEL>
 
 Label has forbidden dot (TR46).
 
-=item Int IDN2_INVALID_TRANSITIONAL
+=item Int B<IDN2_INVALID_TRANSITIONAL>
 
 Label has a character forbidden in transitional mode (TR46).
 
-=item Int IDN2_INVALID_NONTRANSITIONAL
+=item Int B<IDN2_INVALID_NONTRANSITIONAL>
 
 Label has a character forbidden in non-transitional mode (TR46).
 

@@ -5,7 +5,7 @@ unit class Net::LibIDN2:ver<0.0.1>:auth<github:Kaiepi>;
 constant LIB = 'idn2';
 
 sub idn2_check_version(Str --> Str) is native(LIB) { * }
-method check_version(Str $version = '' --> Str) { idn2_check_version($version) }
+method check_version(Str $version = '' --> Str) { idn2_check_version($version) || '' }
 
 constant IDN2_VERSION        is export = idn2_check_version('');
 constant IDN2_VERSION_NUMBER is export = {

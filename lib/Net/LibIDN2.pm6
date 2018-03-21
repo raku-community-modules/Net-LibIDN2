@@ -11,8 +11,8 @@ constant IDN2_VERSION        is export = idn2_check_version('');
 constant IDN2_VERSION_NUMBER is export = {
     my $digits := IDN2_VERSION.comb(/\d+/).map({ :16($_) });
     given +$digits {
-        when 2  { :16(sprintf '%02x%02x0000', $digits) }
-        when 3  { :16(sprintf '%02x%02x%04x', $digits) }
+        when 2 { :16(sprintf '%02x%02x0000', $digits) }
+        when 3 { :16(sprintf '%02x%02x%04x', $digits) }
     }
 }();
 constant IDN2_VERSION_MAJOR  is export = IDN2_VERSION_NUMBER +& 0xFF000000 +> 24;
@@ -22,12 +22,12 @@ constant IDN2_VERSION_PATCH  is export = IDN2_VERSION_NUMBER +& 0x0000FFFF;
 constant IDN2_LABEL_MAX_LENGTH  is export = 63;
 constant IDN2_DOMAIN_MAX_LENGTH is export = 255;
 
-constant IDN2_NFC_INPUT            is export = 1;
-constant IDN2_ALABEL_ROUNDTRIP     is export = 2;
-constant IDN2_TRANSITIONAL         is export = 4;
-constant IDN2_NONTRANSITIONAL      is export = 8;
-constant IDN2_ALLOW_UNASSIGNED     is export = 16;
-constant IDN2_USE_STD3_ASCII_RULES is export = 32;
+constant IDN2_NFC_INPUT            is export = 0x0001;
+constant IDN2_ALABEL_ROUNDTRIP     is export = 0x0002;
+constant IDN2_TRANSITIONAL         is export = 0x0004;
+constant IDN2_NONTRANSITIONAL      is export = 0x0008;
+constant IDN2_ALLOW_UNASSIGNED     is export = 0x0010;
+constant IDN2_USE_STD3_ASCII_RULES is export = 0x0020;
 
 constant IDN2_OK                      is export = 0;
 constant IDN2_MALLOC                  is export = -100;
@@ -61,37 +61,51 @@ constant IDN2_INVALID_NONTRANSITIONAL is export = -313;
 sub idn2_free(Pointer[Str]) is native(LIB) { * }
 
 sub idn2_strerror(int32 --> Str) is native(LIB) { * }
-method strerror(Int $errno --> Str) { idn2_strerror($errno) }
+method strerror(Int $code --> Str) { idn2_strerror($code) || '' }
 
 sub idn2_strerror_name(int32 --> Str) is native(LIB) { * }
-method strerror_name(Int $errno --> Str) { idn2_strerror_name($errno) }
-
-sub invoke_native(&idn2, Int $flags, Int $code is rw, *@inputs --> Str) {
-    my $output := Pointer[Str].new;
-    $code = &idn2(|@inputs, $output, $flags);
-    return '' unless $code eq IDN2_OK;
-
-    my $res = $output.deref;
-    idn2_free($output);
-    $res;
-}
+method strerror_name(Int $code --> Str) { idn2_strerror_name($code) || '' }
 
 sub idn2_lookup_u8(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method lookup_u8(Str, Int $?, Int $? --> Str) { * }
 multi method lookup_u8(Str $input, Int $flags = 0 --> Str) {
-    invoke_native(&idn2_lookup_u8, $flags, my Int $, $input);
+    my Pointer[Str] $outputptr .= new;
+    my $code := idn2_lookup_u8($input, $outputptr, $flags);
+    return '' if $code != IDN2_OK;
+
+    my $output := $outputptr.deref;
+    idn2_free($outputptr);
+    $output;
 }
 multi method lookup_u8(Str $input, Int $flags, Int $code is rw --> Str) {
-    invoke_native(&idn2_lookup_u8, $flags, $code, $input);
+    my Pointer[Str] $outputptr .= new;
+    $code = idn2_lookup_u8($input, $outputptr, $flags);
+    return '' if $code != IDN2_OK;
+
+    my $output := $outputptr.deref;
+    idn2_free($outputptr);
+    $output;
 }
 
 sub idn2_register_u8(Str, Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method register_u8(Str, Str $?, Int $?, Int $? --> Str) { * }
 multi method register_u8(Str $uinput, Str $ainput, Int $flags --> Str) {
-    invoke_native(&idn2_register_u8, $flags, my Int $, $uinput, $ainput);
+    my Pointer[Str] $outputptr .= new;
+    my $code := idn2_register_u8($uinput, $ainput, $outputptr, $flags);
+    return '' if $code != IDN2_OK;
+
+    my $output := $outputptr.deref;
+    idn2_free($outputptr);
+    $output;
 }
 multi method register_u8(Str $uinput, Str $ainput, Int $flags, Int $code is rw --> Str) {
-    invoke_native(&idn2_register_u8, $flags, $code, $uinput, $ainput);
+    my Pointer[Str] $outputptr .= new;
+    $code = idn2_register_u8($uinput, $ainput, $outputptr, $flags);
+    return '' if $code != IDN2_OK;
+
+    my $output := $outputptr.deref;
+    idn2_free($outputptr);
+    $output;
 }
 
 =begin pod

@@ -2,7 +2,7 @@
   "authors" : [ "Ben Davies" ],
   "build-depends" : [ ],
   "depends" : [ ],
-  "description" : "Perl6 bindings for GNU LibIDN2",
+  "description" : "Perl 6 bindings for GNU LibIDN2",
   "license" : "Artistic-2.0",
   "name" : "Net::LibIDN2",
   "perl" : "6.c",

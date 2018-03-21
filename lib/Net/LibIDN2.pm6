@@ -112,7 +112,7 @@ multi method register_u8(Str $uinput, Str $ainput, Int $flags, Int $code is rw -
 
 =head1 NAME
 
-Net::LibIDN2 - Perl6 bindings for GNU LibIDN2
+Net::LibIDN2 - Perl 6 bindings for GNU LibIDN2
 
 =head1 SYNOPSIS
 

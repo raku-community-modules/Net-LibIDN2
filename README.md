@@ -1,7 +1,7 @@
 NAME
 ====
 
-Net::LibIDN2 - Perl6 bindings for GNU LibIDN2
+Net::LibIDN2 - Perl 6 bindings for GNU LibIDN2
 
 SYNOPSIS
 ========

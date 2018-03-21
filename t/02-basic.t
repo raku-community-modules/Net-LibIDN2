@@ -2,7 +2,7 @@ use v6.c;
 use Net::LibIDN2;
 use Test;
 
-plan 9;
+plan 13;
 
 my $idn := Net::LibIDN2.new;
 is $idn.check_version, IDN2_VERSION;
@@ -12,18 +12,30 @@ is $idn.strerror(IDN2_OK), 'success';
 is $idn.strerror_name(IDN2_OK), 'IDN2_OK';
 
 {
-    my $input := 'test';
+    my $input := "m\xFC\xDFli.de";
     my $flags := IDN2_NFC_INPUT;
     my Int $code;
-    is $idn.lookup_u8($input, $flags, $code), $input;
+    my $output := $idn.to_ascii_8z($input, $flags, $code);
+    is $output, 'xn--mli-5ka8l.de';
+    is $code, IDN2_OK;
+}
+
+{
+    my $input := 'xn--mli-5ka8l.de';
+    my $flags := IDN2_NFC_INPUT;
+    my Int $code;
+    my $output := $idn.to_unicode_8z8z($input, $flags, $code);
+    is $output, "m\xFC\xDFli.de";
     is $code, IDN2_OK;
 }
 
 {
     my $uinput := "m\xFC\xDFli";
-    my $ainput := 'xn--mli-5ka8l';
     my $flags := IDN2_NFC_INPUT;
     my Int $code;
+    my $ainput := $idn.lookup_u8($uinput, $flags, $code);
+    is $ainput, 'xn--mli-5ka8l';
+    is $code, IDN2_OK;
     is $idn.register_u8($uinput, $ainput, $flags, $code), $ainput;
     is $code, IDN2_OK;
 }

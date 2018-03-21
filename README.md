@@ -11,10 +11,11 @@ SYNOPSIS
         my $idn := Net::LibIDN2.new;
 
         my Int $code;
-        my $lookup := $idn.lookup_u8('test', IDN2_NFC_INPUT, $code);
-        say "$lookup $code"; # test 0
+        my $ulabel := "m\xFC\xDFli";
+        my $alabel := $idn.lookup_u8($ulabel, IDN2_NFC_INPUT, $code);
+        say "$alabel $code"; # xn--mli-5ka8l 0
 
-        my $result := $idn.register_u8("m\xFC\xDFli", 'xn--mli-5ka8l', IDN2_NFC_INPUT, $code);
+        my $result := $idn.register_u8($ulabel, $alabel, IDN2_NFC_INPUT, $code);
         say "$result $code"; # xn--mli-5ka8l 0
 
         say $idn.strerror($code);      # success
@@ -42,9 +43,23 @@ Returns the error represented by *$errno* in human readable form.
 
 Returns the internal error name of *$errno*.
 
-  * **Net::LibIDN2.lookup_u8**(Str *$input* --> Str)
+  * **Net::LibIDN2.to_ascii_8z**(Str *$input* --> Str)
 
-  * **Net::LibIDN2.lookup_u8**(Str *$input*, Int *$code* is rw --> Str)
+  * **Net::LibIDN2.to_ascii_8z**(Str *$input*, Int *$flags* --> Str)
+
+  * **Net::LibIDN2.to_ascii_8z**(Str *$input*, Int *$flags*, Int *$code* is rw --> Str)
+
+Converts a UTF8 encoded string *$input* to ASCII and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise.
+
+  * **Net::LibIDN2.to_unicode_8z8z**(Str *$input* --> Str)
+
+  * **Net::LibIDN2.to_unicode_8z8z**(Str *$input*, Int *$flags* --> Str)
+
+  * **Net::LibIDN2.to_unicode_8z8z**(Str *$input*, Int *$flags*, Int *$code* is rw --> Str)
+
+Converts an ACE encoded domain name *$input* to UTF8 and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise.
+
+  * **Net::LibIDN2.lookup_u8**(Str *$input* --> Str)
 
   * **Net::LibIDN2.lookup_u8**(Str *$input*, Int *$flags* --> Str)
 
@@ -53,8 +68,6 @@ Returns the internal error name of *$errno*.
 Performs an IDNA2008 lookup string conversion on *$input*. See RFC 5891, section 5. *$input* must be a UTF8 encoded string in NFC form if no *IDN2_NFC_INPUT* flag is passed.
 
   * **Net::LibIDN2.register_u8**(Str *$uinput*, Str *$ainput* --> Str)
-
-  * **Net::LibIDN2.register_u8**(Str *$uinput*, Str *$ainput*, Int *$code* is rw --> Str)
 
   * **Net::LibIDN2.register_u8**(Str *$uinput*, Str *$ainput*, Int *$flags* --> Str)
 

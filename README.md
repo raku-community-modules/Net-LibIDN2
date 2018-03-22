@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Kaiepi/p6-Net-LibIDN2.svg?branch=master)](https://travis-ci.org/Kaiepi/p6-Net-LibIDN2)
+
 NAME
 ====
 

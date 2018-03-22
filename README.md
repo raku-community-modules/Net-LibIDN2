@@ -19,7 +19,6 @@ SYNOPSIS
 
         my $result := $idn.register_u8($ulabel, $alabel, IDN2_NFC_INPUT, $code);
         say "$result $code"; # xn--mli-5ka8l 0
-
         say $idn.strerror($code);      # success
         say $idn.strerror_name($code); # IDN2_OK
 
@@ -51,7 +50,7 @@ Returns the internal error name of *$errno*.
 
   * **Net::LibIDN2.to_ascii_8z**(Str *$input*, Int *$flags*, Int *$code* is rw --> Str)
 
-Converts a UTF8 encoded string *$input* to ASCII and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise.
+Converts a UTF8 encoded string *$input* to ASCII and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise. Requires LibIDN2 v2.0.0 or greater.
 
   * **Net::LibIDN2.to_unicode_8z8z**(Str *$input* --> Str)
 
@@ -59,7 +58,7 @@ Converts a UTF8 encoded string *$input* to ASCII and returns the output. *$code*
 
   * **Net::LibIDN2.to_unicode_8z8z**(Str *$input*, Int *$flags*, Int *$code* is rw --> Str)
 
-Converts an ACE encoded domain name *$input* to UTF8 and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise.
+Converts an ACE encoded domain name *$input* to UTF8 and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise. Requires LibIDN v2.0.0 or greater.
 
   * **Net::LibIDN2.lookup_u8**(Str *$input* --> Str)
 

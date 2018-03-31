@@ -1,6 +1,6 @@
 use v6.c;
 use NativeCall;
-unit class Net::LibIDN2:ver<0.0.2>:auth<github:Kaiepi>;
+unit class Net::LibIDN2:ver<0.0.3>:auth<github:Kaiepi>;
 
 constant LIB = 'idn2';
 

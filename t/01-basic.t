@@ -43,5 +43,3 @@ if IDN2_VERSION_MAJOR < 2 {
     is $idn.register_u8($uinput, $ainput, $flags, $code), $ainput;
     is $code, IDN2_OK;
 }
-
-done-testing;

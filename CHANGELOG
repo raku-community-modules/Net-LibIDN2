@@ -9,3 +9,9 @@
 0.0.3:
 
 - Fixed tests
+
+0.0.4:
+
+- Introduced IDN2_IDN_COMPAT to allow users to tell whether or not the version
+of LibIDN2 installed includes idn2_to_ascii_8z and idn2_to_ascii_8z8z functions
+or not

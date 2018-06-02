@@ -34,15 +34,15 @@ METHODS
 
   * **Net::LibIDN2.check_version**(Str *$version* --> Str)
 
-Compares *$version* against the version of LibIDN2 installed and returns either an empty string if *$version* is greater than the version installed, or *IDN2_VERSION* otherwise.
+Compares `$version` against the version of LibIDN2 installed and returns either an empty string if `$version` is greater than the version installed, or `IDN2_VERSION` otherwise.
 
   * **Net::LibIDN2.strerror**(Int *$errno* --> Str)
 
-Returns the error represented by *$errno* in human readable form.
+Returns the error represented by `$errno` in human readable form.
 
   * **Net::LibIDN2.strerror_name**(Int *$errno* --> Str)
 
-Returns the internal error name of *$errno*.
+Returns the internal error name of `$errno`.
 
   * **Net::LibIDN2.to_ascii_8z**(Str *$input* --> Str)
 
@@ -50,7 +50,7 @@ Returns the internal error name of *$errno*.
 
   * **Net::LibIDN2.to_ascii_8z**(Str *$input*, Int *$flags*, Int *$code* is rw --> Str)
 
-Converts a UTF8 encoded string *$input* to ASCII and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise. Requires LibIDN2 v2.0.0 or greater.
+Converts a UTF8 encoded string `$input` to ASCII and returns the output. `$code`, if provided, is assigned to `IDN2_OK` on success, or another error code otherwise. Requires LibIDN2 v2.0.0 or greater.
 
   * **Net::LibIDN2.to_unicode_8z8z**(Str *$input* --> Str)
 
@@ -58,7 +58,7 @@ Converts a UTF8 encoded string *$input* to ASCII and returns the output. *$code*
 
   * **Net::LibIDN2.to_unicode_8z8z**(Str *$input*, Int *$flags*, Int *$code* is rw --> Str)
 
-Converts an ACE encoded domain name *$input* to UTF8 and returns the output. *$code*, if provided, is assigned to *IDN2_OK* on success, or another error code otherwise. Requires LibIDN v2.0.0 or greater.
+Converts an ACE encoded domain name `$input` to UTF8 and returns the output. `$code`, if provided, is assigned to `IDN2_OK` on success, or another error code otherwise. Requires LibIDN v2.0.0 or greater.
 
   * **Net::LibIDN2.lookup_u8**(Str *$input* --> Str)
 
@@ -66,7 +66,7 @@ Converts an ACE encoded domain name *$input* to UTF8 and returns the output. *$c
 
   * **Net::LibIDN2.lookup_u8**(Str *$input*, Int *$flags*, Int *$code* is rw --> Str)
 
-Performs an IDNA2008 lookup string conversion on *$input*. See RFC 5891, section 5. *$input* must be a UTF8 encoded string in NFC form if no *IDN2_NFC_INPUT* flag is passed.
+Performs an IDNA2008 lookup string conversion on `$input`. See RFC 5891, section 5. `$input` must be a UTF8 encoded string in NFC form if no `IDN2_NFC_INPUT` flag is passed.
 
   * **Net::LibIDN2.register_u8**(Str *$uinput*, Str *$ainput* --> Str)
 
@@ -74,10 +74,14 @@ Performs an IDNA2008 lookup string conversion on *$input*. See RFC 5891, section
 
   * **Net::LibIDN2.register_u8**(Str *$uinput*, Str *$ainput*, Int *$flags*, Int *$code* is rw --> Str)
 
-Performs an IDNA2008 register string conversion on *$uinput* and *$ainput*. See RFC 5891, section 4. *$uinput* must be a UTF8 encoded string in NFC form if no *IDN2_NFC_INPUT* flag is passed. *$ainput* must be an ACE encoded string.
+Performs an IDNA2008 register string conversion on `$uinput` and `$ainput`. See RFC 5891, section 4. `$uinput` must be a UTF8 encoded string in NFC form if no `IDN2_NFC_INPUT` flag is passed. `$ainput` must be an ACE encoded string.
 
 CONSTANTS
 =========
+
+  * Bool **IDN2_IDN_COMPAT**
+
+If `True`, the version of LibIDN2 includes to-ASCII and to-Unicode functions for compatibility with LibIDN.
 
   * Int **IDN2_LABEL_MAX_LENGTH**
 
@@ -170,11 +174,11 @@ Punycode conversion would overflow.
 
   * Int **IDN2_TOO_BIG_DOMAIN**
 
-Domain is larger than *IDN2_DOMAIN_MAX_LENGTH*.
+Domain is larger than `IDN2_DOMAIN_MAX_LENGTH`.
 
   * Int **IDN2_TOO_BIG_LABEL**
 
-Label is larger than *IDN2_LABEL_MAX_LENGTH*.
+Label is larger than `IDN2_LABEL_MAX_LENGTH`.
 
   * Int **IDN2_INVALID_ALABEL**
 
@@ -247,7 +251,7 @@ Label has a character forbidden in non-transitional mode (TR46).
 AUTHOR
 ======
 
-Ben Davies <kaiepi@outlook.com>
+Ben Davies (kaiepi)
 
 COPYRIGHT AND LICENSE
 =====================

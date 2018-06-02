@@ -4,6 +4,8 @@ unit class Net::LibIDN2:ver<0.0.3>:auth<github:Kaiepi>;
 
 constant LIB = 'idn2';
 
+constant IDN2_IDN_COMPAT is export = so try cglobal(LIB, 'idn2_to_ascii_8z', Pointer);
+
 sub idn2_check_version(Str --> Str) is native(LIB) { * }
 method check_version(Str $version = '' --> Str) { idn2_check_version($version) || '' }
 
@@ -61,14 +63,16 @@ constant IDN2_INVALID_NONTRANSITIONAL is export = -313;
 sub idn2_free(Pointer[Str]) is native(LIB) { * }
 
 sub idn2_strerror(int32 --> Str) is native(LIB) { * }
-method strerror(Int $code --> Str) { idn2_strerror($code) || '' }
+method strerror(Int $code --> Str) { idn2_strerror($code) }
 
 sub idn2_strerror_name(int32 --> Str) is native(LIB) { * }
-method strerror_name(Int $code --> Str) { idn2_strerror_name($code) || '' }
+method strerror_name(Int $code --> Str) { idn2_strerror_name($code) }
 
 sub idn2_to_ascii_8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method to_ascii_8z(Str, Int $?, Int $? --> Str) { * }
 multi method to_ascii_8z(Str $input, Int $flags = 0 --> Str) {
+    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
+
     my Pointer[Str] $outputptr .= new;
     my $code := idn2_to_ascii_8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -78,6 +82,8 @@ multi method to_ascii_8z(Str $input, Int $flags = 0 --> Str) {
     $output;
 }
 multi method to_ascii_8z(Str $input, Int $flags, Int $code is rw --> Str) {
+    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
+
     my Pointer[Str] $outputptr .= new;
     $code = idn2_to_ascii_8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -90,6 +96,8 @@ multi method to_ascii_8z(Str $input, Int $flags, Int $code is rw --> Str) {
 sub idn2_to_unicode_8z8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method to_unicode_8z8z(Str, Int $?, Int $? --> Str) { * }
 multi method to_unicode_8z8z(Str $input, Int $flags = 0 --> Str) {
+    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
+
     my Pointer[Str] $outputptr .= new;
     my $code := idn2_to_unicode_8z8z($input ~ "\x00", $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -99,6 +107,8 @@ multi method to_unicode_8z8z(Str $input, Int $flags = 0 --> Str) {
     $output;
 }
 multi method to_unicode_8z8z(Str $input, Int $flags, Int $code is rw --> Str) {
+    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
+
     my Pointer[Str] $outputptr .= new;
     $code = idn2_to_unicode_8z8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -185,40 +195,40 @@ Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
 =item B<Net::LibIDN2.check_version>(--> Str)
 =item B<Net::LibIDN2.check_version>(Str I<$version> --> Str)
 
-Compares I<$version> against the version of LibIDN2 installed and returns either
-an empty string if I<$version> is greater than the version installed, or
-I<IDN2_VERSION> otherwise.
+Compares C<$version> against the version of LibIDN2 installed and returns either
+an empty string if C<$version> is greater than the version installed, or
+C<IDN2_VERSION> otherwise.
 
 =item B<Net::LibIDN2.strerror>(Int I<$errno> --> Str)
 
-Returns the error represented by I<$errno> in human readable form.
+Returns the error represented by C<$errno> in human readable form.
 
 =item B<Net::LibIDN2.strerror_name>(Int I<$errno> --> Str)
 
-Returns the internal error name of I<$errno>.
+Returns the internal error name of C<$errno>.
 
 =item B<Net::LibIDN2.to_ascii_8z>(Str I<$input> --> Str)
 =item B<Net::LibIDN2.to_ascii_8z>(Str I<$input>, Int I<$flags> --> Str)
 =item B<Net::LibIDN2.to_ascii_8z>(Str I<$input>, Int I<$flags>, Int I<$code> is rw --> Str)
 
-Converts a UTF8 encoded string I<$input> to ASCII and returns the output.
-I<$code>, if provided, is assigned to I<IDN2_OK> on success, or another
+Converts a UTF8 encoded string C<$input> to ASCII and returns the output.
+C<$code>, if provided, is assigned to C<IDN2_OK> on success, or another
 error code otherwise. Requires LibIDN2 v2.0.0 or greater.
 
 =item B<Net::LibIDN2.to_unicode_8z8z>(Str I<$input> --> Str)
 =item B<Net::LibIDN2.to_unicode_8z8z>(Str I<$input>, Int I<$flags> --> Str)
 =item B<Net::LibIDN2.to_unicode_8z8z>(Str I<$input>, Int I<$flags>, Int I<$code> is rw --> Str)
 
-Converts an ACE encoded domain name I<$input> to UTF8 and returns the output.
-I<$code>, if provided, is assigned to I<IDN2_OK> on success, or another
+Converts an ACE encoded domain name C<$input> to UTF8 and returns the output.
+C<$code>, if provided, is assigned to C<IDN2_OK> on success, or another
 error code otherwise. Requires LibIDN v2.0.0 or greater.
 
 =item B<Net::LibIDN2.lookup_u8>(Str I<$input> --> Str)
 =item B<Net::LibIDN2.lookup_u8>(Str I<$input>, Int I<$flags> --> Str)
 =item B<Net::LibIDN2.lookup_u8>(Str I<$input>, Int I<$flags>, Int I<$code> is rw --> Str)
 
-Performs an IDNA2008 lookup string conversion on I<$input>. See RFC 5891, section
-5. I<$input> must be a UTF8 encoded string in NFC form if no I<IDN2_NFC_INPUT> flag
+Performs an IDNA2008 lookup string conversion on C<$input>. See RFC 5891, section
+5. C<$input> must be a UTF8 encoded string in NFC form if no C<IDN2_NFC_INPUT> flag
 is passed.
 
 
@@ -226,11 +236,16 @@ is passed.
 =item B<Net::LibIDN2.register_u8>(Str I<$uinput>, Str I<$ainput>, Int I<$flags> --> Str)
 =item B<Net::LibIDN2.register_u8>(Str I<$uinput>, Str I<$ainput>, Int I<$flags>, Int I<$code> is rw --> Str)
 
-Performs an IDNA2008 register string conversion on I<$uinput> and I<$ainput>. See RFC
-5891, section 4. I<$uinput> must be a UTF8 encoded string in NFC form if no
-I<IDN2_NFC_INPUT> flag is passed. I<$ainput> must be an ACE encoded string.
+Performs an IDNA2008 register string conversion on C<$uinput> and C<$ainput>. See RFC
+5891, section 4. C<$uinput> must be a UTF8 encoded string in NFC form if no
+C<IDN2_NFC_INPUT> flag is passed. C<$ainput> must be an ACE encoded string.
 
 =head1 CONSTANTS
+
+=item Bool B<IDN2_IDN_COMPAT>
+
+If C<True>, the version of LibIDN2 includes to-ASCII and to-Unicode functions
+for compatibility with LibIDN.
 
 =item Int B<IDN2_LABEL_MAX_LENGTH>
 
@@ -322,11 +337,11 @@ Punycode conversion would overflow.
 
 =item Int B<IDN2_TOO_BIG_DOMAIN>
 
-Domain is larger than I<IDN2_DOMAIN_MAX_LENGTH>.
+Domain is larger than C<IDN2_DOMAIN_MAX_LENGTH>.
 
 =item Int B<IDN2_TOO_BIG_LABEL>
 
-Label is larger than I<IDN2_LABEL_MAX_LENGTH>.
+Label is larger than C<IDN2_LABEL_MAX_LENGTH>.
 
 =item Int B<IDN2_INVALID_ALABEL>
 
@@ -398,7 +413,7 @@ Label has a character forbidden in non-transitional mode (TR46).
 
 =head1 AUTHOR
 
-Ben Davies <kaiepi@outlook.com>
+Ben Davies (kaiepi)
 
 =head1 COPYRIGHT AND LICENSE
 

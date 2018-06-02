@@ -11,9 +11,7 @@ is $idn.check_version('255.255.65525'), '';
 is $idn.strerror(IDN2_OK), 'success';
 is $idn.strerror_name(IDN2_OK), 'IDN2_OK';
 
-if IDN2_VERSION_MAJOR < 2 {
-    skip 'idn2_to_ascii_8z and idn2_to_ascii_8z8z did not exist before LibIDN v2.0.0', 4;
-} else {
+if IDN2_IDN_COMPAT {
     {
         my $input := "m\xFC\xDFli.de";
         my $flags := IDN2_NFC_INPUT;
@@ -31,6 +29,8 @@ if IDN2_VERSION_MAJOR < 2 {
         is $output, "m\xFC\xDFli.de";
         is $code, IDN2_OK;
     }
+} else {
+    skip 'The version of LibIDN2 installed does not include LibIDN compatibility functions', 4;
 }
 
 {

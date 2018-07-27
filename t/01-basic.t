@@ -11,7 +11,7 @@ is $idn.check_version('255.255.65525'), '';
 is $idn.strerror(IDN2_OK), 'success';
 is $idn.strerror_name(IDN2_OK), 'IDN2_OK';
 
-if IDN2_IDN_COMPAT {
+if Version.new(IDN2_VERSION) >= v2.0.0 {
     {
         my $input := "m\xFC\xDFli.de";
         my $flags := IDN2_NFC_INPUT;

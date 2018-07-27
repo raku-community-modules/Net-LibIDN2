@@ -4,8 +4,6 @@ unit class Net::LibIDN2:ver<0.0.3>:auth<github:Kaiepi>;
 
 constant LIB = 'idn2';
 
-constant IDN2_IDN_COMPAT is export = so try cglobal(LIB, 'idn2_to_ascii_8z', Pointer);
-
 sub idn2_check_version(Str --> Str) is native(LIB) { * }
 method check_version(Str $version = '' --> Str) { idn2_check_version($version) || '' }
 
@@ -71,8 +69,6 @@ method strerror_name(Int $code --> Str) { idn2_strerror_name($code) }
 sub idn2_to_ascii_8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method to_ascii_8z(Str, Int $?, Int $? --> Str) { * }
 multi method to_ascii_8z(Str $input, Int $flags = 0 --> Str) {
-    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
-
     my Pointer[Str] $outputptr .= new;
     my $code := idn2_to_ascii_8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -82,8 +78,6 @@ multi method to_ascii_8z(Str $input, Int $flags = 0 --> Str) {
     $output;
 }
 multi method to_ascii_8z(Str $input, Int $flags, Int $code is rw --> Str) {
-    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
-
     my Pointer[Str] $outputptr .= new;
     $code = idn2_to_ascii_8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -96,8 +90,6 @@ multi method to_ascii_8z(Str $input, Int $flags, Int $code is rw --> Str) {
 sub idn2_to_unicode_8z8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
 proto method to_unicode_8z8z(Str, Int $?, Int $? --> Str) { * }
 multi method to_unicode_8z8z(Str $input, Int $flags = 0 --> Str) {
-    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
-
     my Pointer[Str] $outputptr .= new;
     my $code := idn2_to_unicode_8z8z($input ~ "\x00", $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -107,8 +99,6 @@ multi method to_unicode_8z8z(Str $input, Int $flags = 0 --> Str) {
     $output;
 }
 multi method to_unicode_8z8z(Str $input, Int $flags, Int $code is rw --> Str) {
-    die 'The version of LibIDN2 installed does not include LibIDN compatibility functions' unless IDN2_IDN_COMPAT;
-
     my Pointer[Str] $outputptr .= new;
     $code = idn2_to_unicode_8z8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
@@ -241,11 +231,6 @@ Performs an IDNA2008 register string conversion on C<$uinput> and C<$ainput>. Se
 C<IDN2_NFC_INPUT> flag is passed. C<$ainput> must be an ACE encoded string.
 
 =head1 CONSTANTS
-
-=item Bool B<IDN2_IDN_COMPAT>
-
-If C<True>, the version of LibIDN2 includes to-ASCII and to-Unicode functions
-for compatibility with LibIDN.
 
 =item Int B<IDN2_LABEL_MAX_LENGTH>
 

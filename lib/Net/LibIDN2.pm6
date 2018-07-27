@@ -1,18 +1,18 @@
 use v6.c;
 use NativeCall;
-unit class Net::LibIDN2:ver<0.0.3>:auth<github:Kaiepi>;
+unit class Net::LibIDN2:ver<0.0.4>:auth<github:Kaiepi>;
 
 constant LIB = 'idn2';
 
-sub idn2_check_version(Str --> Str) is native(LIB) { * }
+sub idn2_check_version(Str --> Str) is native(LIB) {*}
 method check_version(Str $version = '' --> Str) { idn2_check_version($version) || '' }
 
 constant IDN2_VERSION        is export = idn2_check_version('');
 constant IDN2_VERSION_NUMBER is export = {
-    my $digits := IDN2_VERSION.comb(/\d+/).map({ :16($_) });
-    given +$digits {
-        when 2 { :16(sprintf '%02x%02x0000', $digits) }
-        when 3 { :16(sprintf '%02x%02x%04x', $digits) }
+    my @digits = IDN2_VERSION.comb(/\d+/).map({ :16($_) });
+    given +@digits {
+        when 2 { :16(sprintf '%02x%02x0000', |@digits) }
+        when 3 { :16(sprintf '%02x%02x%04x', |@digits) }
     }
 }();
 constant IDN2_VERSION_MAJOR  is export = IDN2_VERSION_NUMBER +& 0xFF000000 +> 24;
@@ -58,22 +58,22 @@ constant IDN2_DOT_IN_LABEL            is export = -311;
 constant IDN2_INVALID_TRANSITIONAL    is export = -312;
 constant IDN2_INVALID_NONTRANSITIONAL is export = -313;
 
-sub idn2_free(Pointer[Str]) is native(LIB) { * }
+sub idn2_free(Pointer[Str]) is native(LIB) {*}
 
-sub idn2_strerror(int32 --> Str) is native(LIB) { * }
+sub idn2_strerror(int32 --> Str) is native(LIB) {*}
 method strerror(Int $code --> Str) { idn2_strerror($code) }
 
-sub idn2_strerror_name(int32 --> Str) is native(LIB) { * }
+sub idn2_strerror_name(int32 --> Str) is native(LIB) {*}
 method strerror_name(Int $code --> Str) { idn2_strerror_name($code) }
 
-sub idn2_to_ascii_8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
-proto method to_ascii_8z(Str, Int $?, Int $? --> Str) { * }
+sub idn2_to_ascii_8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) {*}
+proto method to_ascii_8z(Str, Int $?, Int $? --> Str) {*}
 multi method to_ascii_8z(Str $input, Int $flags = 0 --> Str) {
     my Pointer[Str] $outputptr .= new;
-    my $code := idn2_to_ascii_8z($input, $outputptr, $flags);
+    my $code = idn2_to_ascii_8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
@@ -82,19 +82,19 @@ multi method to_ascii_8z(Str $input, Int $flags, Int $code is rw --> Str) {
     $code = idn2_to_ascii_8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
 
-sub idn2_to_unicode_8z8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
-proto method to_unicode_8z8z(Str, Int $?, Int $? --> Str) { * }
+sub idn2_to_unicode_8z8z(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) {*}
+proto method to_unicode_8z8z(Str, Int $?, Int $? --> Str) {*}
 multi method to_unicode_8z8z(Str $input, Int $flags = 0 --> Str) {
     my Pointer[Str] $outputptr .= new;
-    my $code := idn2_to_unicode_8z8z($input ~ "\x00", $outputptr, $flags);
+    my $code = idn2_to_unicode_8z8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
@@ -103,19 +103,19 @@ multi method to_unicode_8z8z(Str $input, Int $flags, Int $code is rw --> Str) {
     $code = idn2_to_unicode_8z8z($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
 
-sub idn2_lookup_u8(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
-proto method lookup_u8(Str, Int $?, Int $? --> Str) { * }
+sub idn2_lookup_u8(Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) {*}
+proto method lookup_u8(Str, Int $?, Int $? --> Str) {*}
 multi method lookup_u8(Str $input, Int $flags = 0 --> Str) {
     my Pointer[Str] $outputptr .= new;
-    my $code := idn2_lookup_u8($input, $outputptr, $flags);
+    my $code = idn2_lookup_u8($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
@@ -124,19 +124,19 @@ multi method lookup_u8(Str $input, Int $flags, Int $code is rw --> Str) {
     $code = idn2_lookup_u8($input, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
 
-sub idn2_register_u8(Str, Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) { * }
-proto method register_u8(Str, Str $?, Int $?, Int $? --> Str) { * }
+sub idn2_register_u8(Str, Str, Pointer[Str] is rw, int32 --> int32) is native(LIB) {*}
+proto method register_u8(Str, Str $?, Int $?, Int $? --> Str) {*}
 multi method register_u8(Str $uinput, Str $ainput, Int $flags = 0 --> Str) {
     my Pointer[Str] $outputptr .= new;
-    my $code := idn2_register_u8($uinput, $ainput, $outputptr, $flags);
+    my $code = idn2_register_u8($uinput, $ainput, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
@@ -145,7 +145,7 @@ multi method register_u8(Str $uinput, Str $ainput, Int $flags, Int $code is rw -
     $code = idn2_register_u8($uinput, $ainput, $outputptr, $flags);
     return '' if $code != IDN2_OK;
 
-    my $output := $outputptr.deref;
+    my $output = $outputptr.deref;
     idn2_free($outputptr);
     $output;
 }
@@ -162,14 +162,14 @@ Net::LibIDN2 - Perl 6 bindings for GNU LibIDN2
 
     use Net::LibIDN2;
 
-    my $idn := Net::LibIDN2.new;
+    my $idn = Net::LibIDN2.new;
 
     my Int $code;
-    my $ulabel := "m\xFC\xDFli";
-    my $alabel := $idn.lookup_u8($ulabel, IDN2_NFC_INPUT, $code);
+    my $ulabel = "m\xFC\xDFli";
+    my $alabel = $idn.lookup_u8($ulabel, IDN2_NFC_INPUT, $code);
     say "$alabel $code"; # xn--mli-5ka8l 0
 
-    my $result := $idn.register_u8($ulabel, $alabel, IDN2_NFC_INPUT, $code);
+    my $result = $idn.register_u8($ulabel, $alabel, IDN2_NFC_INPUT, $code);
     say "$result $code"; # xn--mli-5ka8l 0
     say $idn.strerror($code);      # success
     say $idn.strerror_name($code); # IDN2_OK

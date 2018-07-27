@@ -5,11 +5,22 @@ unit class Net::LibIDN2:ver<0.0.4>:auth<github:Kaiepi>;
 constant LIB = 'idn2';
 
 sub idn2_check_version(Str --> Str) is native(LIB) {*}
-method check_version(Str $version = '' --> Str) { idn2_check_version($version) || '' }
+proto method check_version($? --> Version) {*}
+multi method check_version(--> Version) {
+    Version.new: idn2_check_version('')
+}
+multi method check_version(Str $version --> Version) {
+    my $res = idn2_check_version($version);
+    $res ?? Version.new($res) !! Nil;
+}
+multi method check_version(Version $version --> Version) {
+    my $res = idn2_check_version($version.Str);
+    $res ?? Version.new($res) !! Nil;
+}
 
-constant IDN2_VERSION        is export = idn2_check_version('');
+constant IDN2_VERSION        is export = Version.new: idn2_check_version('');
 constant IDN2_VERSION_NUMBER is export = {
-    my @digits = IDN2_VERSION.comb(/\d+/).map({ :16($_) });
+    my @digits = IDN2_VERSION.Str.comb(/\d+/).map({ :16($_) });
     given +@digits {
         when 2 { :16(sprintf '%02x%02x0000', |@digits) }
         when 3 { :16(sprintf '%02x%02x%04x', |@digits) }
@@ -182,8 +193,9 @@ Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
 
 =head1 METHODS
 
-=item B<Net::LibIDN2.check_version>(--> Str)
-=item B<Net::LibIDN2.check_version>(Str I<$version> --> Str)
+=item B<Net::LibIDN2.check_version>(--> Version)
+=item B<Net::LibIDN2.check_version>(Str I<$version> --> Version)
+=item B<Net::LibIDN2.check_version>(Version I<$version> --> Version)
 
 Compares C<$version> against the version of LibIDN2 installed and returns either
 an empty string if C<$version> is greater than the version installed, or

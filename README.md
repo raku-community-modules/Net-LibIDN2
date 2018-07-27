@@ -10,14 +10,14 @@ SYNOPSIS
 
         use Net::LibIDN2;
 
-        my $idn := Net::LibIDN2.new;
+        my $idn = Net::LibIDN2.new;
 
         my Int $code;
-        my $ulabel := "m\xFC\xDFli";
-        my $alabel := $idn.lookup_u8($ulabel, IDN2_NFC_INPUT, $code);
+        my $ulabel = "m\xFC\xDFli";
+        my $alabel = $idn.lookup_u8($ulabel, IDN2_NFC_INPUT, $code);
         say "$alabel $code"; # xn--mli-5ka8l 0
 
-        my $result := $idn.register_u8($ulabel, $alabel, IDN2_NFC_INPUT, $code);
+        my $result = $idn.register_u8($ulabel, $alabel, IDN2_NFC_INPUT, $code);
         say "$result $code"; # xn--mli-5ka8l 0
         say $idn.strerror($code);      # success
         say $idn.strerror_name($code); # IDN2_OK
@@ -30,9 +30,11 @@ Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
 METHODS
 =======
 
-  * **Net::LibIDN2.check_version**(--> Str)
+  * **Net::LibIDN2.check_version**(--> Version)
 
-  * **Net::LibIDN2.check_version**(Str *$version* --> Str)
+  * **Net::LibIDN2.check_version**(Str *$version* --> Version)
+
+  * **Net::LibIDN2.check_version**(Version *$version* --> Version)
 
 Compares `$version` against the version of LibIDN2 installed and returns either an empty string if `$version` is greater than the version installed, or `IDN2_VERSION` otherwise.
 
@@ -78,10 +80,6 @@ Performs an IDNA2008 register string conversion on `$uinput` and `$ainput`. See 
 
 CONSTANTS
 =========
-
-  * Bool **IDN2_IDN_COMPAT**
-
-If `True`, the version of LibIDN2 includes to-ASCII and to-Unicode functions for compatibility with LibIDN.
 
   * Int **IDN2_LABEL_MAX_LENGTH**
 

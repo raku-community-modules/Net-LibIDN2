@@ -7,11 +7,11 @@ plan 13;
 my $idn := Net::LibIDN2.new;
 is $idn.check_version, IDN2_VERSION;
 is $idn.check_version('0.0.1'), IDN2_VERSION;
-is $idn.check_version('255.255.65525'), '';
+is $idn.check_version('255.255.65525'), Nil;
 is $idn.strerror(IDN2_OK), 'success';
 is $idn.strerror_name(IDN2_OK), 'IDN2_OK';
 
-if Version.new(IDN2_VERSION) >= v2.0.0 {
+if IDN2_VERSION >= v2.0.0 {
     {
         my $input := "m\xFC\xDFli.de";
         my $flags := IDN2_NFC_INPUT;

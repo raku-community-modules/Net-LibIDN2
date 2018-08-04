@@ -27,6 +27,63 @@ DESCRIPTION
 
 Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
 
+Using this module requires a native LibIDN2 dependency. Here's how to install it for your OS:
+
+- Windows
+
+Clone [https://gitlab.com/libidn/libidn2](https://gitlab.com/libidn/libidn2) and follow the install instructions in the README. Don't forget to add the path to the installed LibIDN2 to your PATH environment variable!
+
+- OS X
+
+    $ brew install libidn2
+
+- Ubuntu/Debian
+
+    $ sudo apt-get install libidn2
+
+- OpenSUSE
+
+    $ sudo zypper install libidn2
+
+- Fedora
+
+    $ sudo yum install libidn2
+
+- Arch/Manjaro
+
+    $ sudo pacman -S libidn2
+
+- FreeBSD
+
+    # pkg install libidn2
+
+or
+
+    # cd /usr/ports/devel/libidn2
+    # make config
+    # make
+    # make install
+
+- OpenBSD
+
+    $ doas pkg_add libidn2
+
+or
+
+    $ cd /usr/ports/devel/libidn2
+    $ doas make
+    $ doas make install
+
+- NetBSD
+
+    # pkgin install libidn2
+
+or
+
+    # cd /usr/pkgsrc/devel/libidn2
+    # make
+    # make install
+
 METHODS
 =======
 

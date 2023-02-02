@@ -3,7 +3,7 @@
 NAME
 ====
 
-Net::LibIDN2 - Perl 6 bindings for GNU LibIDN2
+Net::LibIDN2 - Raku bindings for GNU LibIDN2
 
 SYNOPSIS
 ========
@@ -25,7 +25,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
+Net::LibIDN2 is a Raku wrapper for the GNU LibIDN2 library.
 
 Using this module requires a native LibIDN2 dependency. Here's how to install it for your OS:
 

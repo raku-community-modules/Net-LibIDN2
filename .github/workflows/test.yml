@@ -27,7 +27,7 @@ jobs:
         with:
           raku-version: ${{ matrix.raku-version }}
       - name: Get libidn2 from APT
-        if: runner.os == 'Ubuntu'
+        if: matrix.os == 'ubuntu-latest'
         run: sudo apt install libidn2-dev
       - name: Run tests and Install
         run: zef install . --debug --/tap-harness

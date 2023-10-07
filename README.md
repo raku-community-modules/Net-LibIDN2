@@ -39,7 +39,7 @@ Clone [https://gitlab.com/libidn/libidn2](https://gitlab.com/libidn/libidn2) and
 
   * Ubuntu/Debian
 
-    $ sudo apt-get install libidn2
+    $ sudo apt install libidn2-dev
 
   * OpenSUSE
 

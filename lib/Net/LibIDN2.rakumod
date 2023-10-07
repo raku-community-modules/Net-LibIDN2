@@ -205,7 +205,7 @@ environment variable!
 
 =item Ubuntu/Debian
 
-    $ sudo apt-get install libidn2
+    $ sudo apt install libidn2-dev
 
 =item OpenSUSE
 

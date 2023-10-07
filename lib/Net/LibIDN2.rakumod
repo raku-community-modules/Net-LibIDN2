@@ -1,6 +1,6 @@
 use v6.c;
 use NativeCall;
-unit class Net::LibIDN2:ver<0.1.0>:auth<github:Kaiepi>;
+unit class Net::LibIDN2;
 
 constant LIB = 'idn2';
 
@@ -165,7 +165,7 @@ multi method register_u8(Str $uinput, Str $ainput, Int $flags, Int $code is rw -
 
 =head1 NAME
 
-Net::LibIDN2 - Perl 6 bindings for GNU LibIDN2
+Net::LibIDN2 - Raku bindings for GNU LibIDN2
 
 =head1 SYNOPSIS
 
@@ -189,7 +189,7 @@ Net::LibIDN2 - Perl 6 bindings for GNU LibIDN2
 
 =head1 DESCRIPTION
 
-Net::LibIDN2 is a Perl 6 wrapper for the GNU LibIDN2 library.
+Net::LibIDN2 is a Raku wrapper for the GNU LibIDN2 library.
 
 Using this module requires a native LibIDN2 dependency. Here's how to install it for your OS:
 

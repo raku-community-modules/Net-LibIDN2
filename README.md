@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Kaiepi/p6-Net-LibIDN2.svg?branch=master)](https://travis-ci.org/Kaiepi/p6-Net-LibIDN2)
+[![Actions Status](https://github.com/raku-community-modules/Net-LibIDN2/workflows/test/badge.svg)](https://github.com/raku-community-modules/Net-LibIDN2/actions)
 
 NAME
 ====
@@ -29,31 +29,31 @@ Net::LibIDN2 is a Raku wrapper for the GNU LibIDN2 library.
 
 Using this module requires a native LibIDN2 dependency. Here's how to install it for your OS:
 
-- Windows
+  * Windows
 
 Clone [https://gitlab.com/libidn/libidn2](https://gitlab.com/libidn/libidn2) and follow the install instructions in the README. Don't forget to add the path to the installed LibIDN2 to your PATH environment variable!
 
-- OS X
+  * OS X
 
     $ brew install libidn2
 
-- Ubuntu/Debian
+  * Ubuntu/Debian
 
     $ sudo apt-get install libidn2
 
-- OpenSUSE
+  * OpenSUSE
 
     $ sudo zypper install libidn2
 
-- Fedora
+  * Fedora
 
     $ sudo yum install libidn2
 
-- Arch/Manjaro
+  * Arch/Manjaro
 
     $ sudo pacman -S libidn2
 
-- FreeBSD
+  * FreeBSD
 
     # pkg install libidn2
 
@@ -64,7 +64,7 @@ or
     # make
     # make install
 
-- OpenBSD
+  * OpenBSD
 
     $ doas pkg_add libidn2
 
@@ -74,7 +74,7 @@ or
     $ doas make
     $ doas make install
 
-- NetBSD
+  * NetBSD
 
     # pkgin install libidn2
 

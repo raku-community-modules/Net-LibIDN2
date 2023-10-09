@@ -16,7 +16,7 @@
   "raku": "6.c",
   "resources": [
   ],
-  "source-url": "git://github.com/Kaiepi/p6-Net-LibIDN2.git",
+  "source-url": "https://github.com/raku-community-modules/Net-LibIDN2",
   "tags": [
     "API",
     "DNS",
